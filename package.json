@@ -1,0 +1,17 @@
+{
+  "name": "faucet-backend",
+  "version": "1.0.0",
+  "main": "backend.js",
+  "repository": "https://github.com/polischain/faucet-backend.git",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "node-cache": "5.1.2",
+    "web3": "1.4.0"
+  },
+  "scripts": {
+    "start": "node backend.js"
+  }
+}
