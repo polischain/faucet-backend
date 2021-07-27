@@ -48,7 +48,8 @@ app.post('/', async (req, res) => {
                         from: account.address,
                         to: data.address,
                         value: Web3.utils.toWei("10", "ether"),
-                        gas: "5000000"
+                        gas: "21000",
+                        gasPrice: Web3.utils.toWei("0.1", "gwei")
                     })
                     res.json({data: tx.transactionHash})
                     return
