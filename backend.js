@@ -10,7 +10,7 @@ const cache_time = 60 * 60 * 24;
 const PORT = process.env.PORT || 8080;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
-const web3_testnet = new Web3("https://sparta1.polispay.org")
+const web3_testnet = new Web3("https://sparta-rpc.polis.tech")
 
 const account = web3_testnet.eth.accounts.privateKeyToAccount("0x" + PRIVATE_KEY)
 web3_testnet.eth.accounts.wallet.add(account)
