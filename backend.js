@@ -24,8 +24,8 @@ app.use(cors())
 
 app.post('/', async (req, res) => {
     let body = req.body;
-    let data = { network: body.network, address: Web3.utils.toChecksumAddress(body.address)}
-    if (!data.verify) {
+    let data = { network: body.network, address: Web3.utils.toChecksumAddress(body.address), token: body.verify}
+    if (!data.token) {
         res.json({error: "No captcha token for verification"})
         return
     }
@@ -40,7 +40,7 @@ app.post('/', async (req, res) => {
     }
 
     try {
-        const tokenVerify = await verify(SECRET, data.verify)
+        const tokenVerify = await verify(SECRET, data.token)
         if (tokenVerify.success) {
 
             console.log("Coin request received for", data.network)
