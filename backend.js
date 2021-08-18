@@ -42,7 +42,7 @@ app.post('/', async (req, res) => {
     try {
         const tokenVerify = await verify(SECRET, data.verify)
         if (tokenVerify.success) {
-            
+
             console.log("Coin request received for", data.network)
 
             let cached = cache.get(data.address)
