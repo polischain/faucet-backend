@@ -1,4 +1,5 @@
 const express = require('express');
+const {verify} = require('hcaptcha');
 const cors = require('cors')
 
 const Web3 = require("web3");
@@ -9,6 +10,7 @@ const cache_time = 60 * 60 * 24;
 
 const PORT = process.env.PORT || 8080;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const SECRET = process.env.CAPTCHA_SECRET;
 
 const web3_testnet = new Web3("https://sparta-rpc.polis.tech")
 
@@ -23,6 +25,10 @@ app.use(cors())
 app.post('/', async (req, res) => {
     let body = req.body;
     let data = { network: body.network, address: Web3.utils.toChecksumAddress(body.address)}
+    if (!data.verify) {
+        res.json({error: "No captcha token for verification"})
+        return
+    }
     if (!data.network || data.network !== "mainnet" && data.network !== "testnet") {
         res.json({error: "Wrong network specified, please use mainnet or testnet"})
         return
@@ -33,37 +39,48 @@ app.post('/', async (req, res) => {
         return
     }
 
-    console.log("Coin request received for", data.network)
+    try {
+        const tokenVerify = await verify(SECRET, data.verify)
+        if (tokenVerify.success) {
+            
+            console.log("Coin request received for", data.network)
 
-    let cached = cache.get(data.address)
-    if (!cached) {
-        let success = cache.set(data.address, Date.now(), cache_time);
-        if (success) {
-            switch (data.network) {
-                case "mainnet":
-                    res.json({error: "Mainnet is not supported yet"})
-                    return
-                case "testnet":
-                    let tx = await web3_testnet.eth.sendTransaction({
-                        from: account.address,
-                        to: data.address,
-                        value: Web3.utils.toWei("0.01", "ether"),
-                        gas: "21000",
-                        gasPrice: Web3.utils.toWei("1", "gwei")
-                    })
-                    res.json({data: tx.transactionHash})
-                    return
+            let cached = cache.get(data.address)
+            if (!cached) {
+                let success = cache.set(data.address, Date.now(), cache_time);
+                if (success) {
+                    switch (data.network) {
+                        case "mainnet":
+                            res.json({error: "Mainnet is not supported yet"})
+                            return
+                        case "testnet":
+                            let tx = await web3_testnet.eth.sendTransaction({
+                                from: account.address,
+                                to: data.address,
+                                value: Web3.utils.toWei("0.01", "ether"),
+                                gas: "21000",
+                                gasPrice: Web3.utils.toWei("1", "gwei")
+                            })
+                            res.json({data: tx.transactionHash})
+                            return
+                    }
+                } else {
+                    res.json({error: "Internal Error"})
+                }
+            } else {
+                console.log("Address already received coins within period, ignoring...")
+                let timestamp_release = cached + (cache_time * 1000);
+                let timestamp_now = Date.now();
+                let remaining = ((timestamp_release - timestamp_now) / 1000).toFixed(0);
+                res.json({error: "Already received coins, wait " + secondsRender(remaining)})
             }
         } else {
-            res.json({error: "Internal Error"})
+            res.json({error: "Invalid token"})
         }
-    } else {
-        console.log("Address already received coins within period, ignoring...")
-        let timestamp_release = cached + (cache_time * 1000);
-        let timestamp_now = Date.now();
-        let remaining = ((timestamp_release - timestamp_now) / 1000).toFixed(0);
-        res.json({error: "Already received coins, wait " + secondsRender(remaining)})
+    } catch (e) {
+        res.json({error: "Verification failed for an internal error"})
     }
+
 });
 
 app.listen(PORT, () => {
