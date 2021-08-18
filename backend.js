@@ -57,7 +57,7 @@ app.post('/', async (req, res) => {
                             let tx = await web3_testnet.eth.sendTransaction({
                                 from: account.address,
                                 to: data.address,
-                                value: Web3.utils.toWei("0.01", "ether"),
+                                value: Web3.utils.toWei("10", "ether"),
                                 gas: "21000",
                                 gasPrice: Web3.utils.toWei("1", "gwei")
                             })
