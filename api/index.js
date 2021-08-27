@@ -28,11 +28,11 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-app.get("/api", async (req, res) => {
+app.get("/", async (req, res) => {
     res.sendFile(path.join(__dirname,'./landing.html'))
 })
 
-app.post('/api', async (req, res) => {
+app.post('/', async (req, res) => {
     let body = req.body;
     let data = { network: body.network, address: Web3.utils.toChecksumAddress(body.address), token: body.verify}
     if (!data.token) {
