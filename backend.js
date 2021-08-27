@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require("path");
 const {verify} = require('hcaptcha');
 const cors = require('cors')
 
@@ -14,14 +15,22 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const SECRET = process.env.CAPTCHA_SECRET;
 
 const web3_testnet = new Web3("https://sparta-rpc.polis.tech")
+const web3_mainnet = new Web3("https://rpc.polis.tech")
 
 const account = web3_testnet.eth.accounts.privateKeyToAccount("0x" + PRIVATE_KEY)
 web3_testnet.eth.accounts.wallet.add(account)
 web3_testnet.defaultAccount = account.address;
 
+web3_mainnet.eth.accounts.wallet.add(account)
+web3_mainnet.defaultAccount = account.address;
+
 const app = express();
 app.use(express.json());
 app.use(cors())
+
+app.get("/", async (req, res) => {
+    res.sendFile(path.join(__dirname,'./landing.html'))
+})
 
 app.post('/', async (req, res) => {
     let body = req.body;
