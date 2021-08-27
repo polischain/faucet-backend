@@ -1,7 +1,7 @@
 {
   "name": "faucet-backend",
   "version": "1.0.0",
-  "main": "backend.js",
+  "main": "api/index.js",
   "repository": "https://github.com/polischain/faucet-backend.git",
   "license": "MIT",
   "private": false,
@@ -13,6 +13,6 @@
     "web3": "1.4.0"
   },
   "scripts": {
-    "start": "node backend.js"
+    "start": "node api/index.js"
   }
 }
