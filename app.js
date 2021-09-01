@@ -61,7 +61,14 @@ app.post('/', async (req, res) => {
                 if (success) {
                     switch (data.network) {
                         case "mainnet":
-                            res.json({error: "Mainnet is not supported yet"})
+                            let tx = await web3_mainnet.eth.sendTransaction({
+                                from: account.address,
+                                to: data.address,
+                                value: Web3.utils.toWei("0.001", "ether"),
+                                gas: "21000",
+                                gasPrice: Web3.utils.toWei("1", "gwei")
+                            })
+                            res.json({data: tx.transactionHash})
                             return
                         case "testnet":
                             let tx = await web3_testnet.eth.sendTransaction({
