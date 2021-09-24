@@ -61,24 +61,24 @@ app.post('/', async (req, res) => {
                 if (success) {
                     switch (data.network) {
                         case "mainnet":
-                            let tx = await web3_mainnet.eth.sendTransaction({
+                            let txMainNet = await web3_mainnet.eth.sendTransaction({
                                 from: account.address,
                                 to: data.address,
                                 value: Web3.utils.toWei("0.001", "ether"),
                                 gas: "21000",
                                 gasPrice: Web3.utils.toWei("1", "gwei")
                             })
-                            res.json({data: tx.transactionHash})
+                            res.json({data: txMainNet.transactionHash})
                             return
                         case "testnet":
-                            let tx = await web3_testnet.eth.sendTransaction({
+                            let txTestNet = await web3_testnet.eth.sendTransaction({
                                 from: account.address,
                                 to: data.address,
                                 value: Web3.utils.toWei("10", "ether"),
                                 gas: "21000",
                                 gasPrice: Web3.utils.toWei("1", "gwei")
                             })
-                            res.json({data: tx.transactionHash})
+                            res.json({data: txTestNet.transactionHash})
                             return
                     }
                 } else {
